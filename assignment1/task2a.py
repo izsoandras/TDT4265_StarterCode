@@ -13,7 +13,11 @@ def pre_process_images(X: np.ndarray):
     assert X.shape[1] == 784,\
         f"X.shape[1]: {X.shape[1]}, should be 784"
     # TODO implement this function (Task 2a)
-    return X
+
+    Xret = X.copy().astype(np.float64)/128 - 1
+    Xret[-1,:] = np.zeros_like(Xret[0,:])
+
+    return Xret
 
 
 def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray) -> float:
@@ -46,6 +50,11 @@ class BinaryModel:
             y: output of model with shape [batch size, 1]
         """
         # TODO implement this function (Task 2a)
+
+        z = self.w @ X
+
+        a = 
+
         return None
 
     def backward(self, X: np.ndarray, outputs: np.ndarray, targets: np.ndarray) -> None:
