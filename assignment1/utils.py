@@ -124,6 +124,8 @@ def load_full_mnist(train_size: int = 18000, test_size: int = 2000, sample_stoch
         X_val: images of shape [test_size, 784] in the range (0, 255)
         Y_val: labels of shape [test_size]
     """
+    train_size = 18000
+    test_size = 9000
     X_train, Y_train, X_val, Y_val = mnist.load()
 
     if sample_stochastic:
