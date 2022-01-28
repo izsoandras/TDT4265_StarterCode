@@ -17,7 +17,6 @@ def calculate_accuracy(X: np.ndarray, targets: np.ndarray, model: BinaryModel) -
     """
     # TODO Implement this function (Task 2c)
     predictions = np.round(model.forward(X))
-    print(predictions==targets)
     correct_predictions = np.sum(predictions == targets)
     accuracy = correct_predictions/len(targets)
     return accuracy
@@ -70,7 +69,7 @@ class LogisticTrainer(BaseTrainer):
 
 if __name__ == "__main__":
     # hyperparameters DO NOT CHANGE IF NOT SPECIFIED IN ASSIGNMENT TEXT
-    num_epochs = 50
+    num_epochs = 500
     learning_rate = 0.05
     batch_size = 128
     shuffle_dataset = False
