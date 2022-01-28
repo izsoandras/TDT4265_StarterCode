@@ -89,6 +89,20 @@ class BaseTrainer:
                     val_history["accuracy"][global_step] = accuracy_val
 
                     # TODO (Task 2d): Implement early stopping here.
+                    new_dict = dict(val_history["loss"])
+                    del new_dict[global_step]
+                    #print("NEW VAL")
+                    if global_step == 0:
+                        es_counter = 0
+                    elif val_history["loss"][global_step] < min(new_dict.values()):
+                        es_counter = 0
+                        #print("RESET")
+                    else:
+                        es_counter += 1
+                        #print(es_counter)
+                        if es_counter >= 10:
+                            print("ES at epoch nr. " + str(epoch))
+                            return train_history, val_history
                     # You can access the validation loss in val_history["loss"]
                 global_step += 1
         return train_history, val_history
