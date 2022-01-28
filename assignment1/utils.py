@@ -96,7 +96,7 @@ def load_full_mnist():
     Loads and splits the dataset into train, validation and test.
     """
     train_size = 18000
-    test_size = 2000
+    test_size = 9000
     X_train, Y_train, X_val, Y_val = mnist.load()
 
     # First 20000 images from train set
