@@ -53,6 +53,7 @@ class SoftmaxModel:
             X: images of shape [batch size, 785]
             outputs: outputs of model of shape: [batch size, num_outputs]
             targets: labels/targets of each image of shape: [batch size, num_classes]
+            lbd: coefficient of regularization
         """
         # TODO implement this function (Task 3a)
         # To implement L2 regularization task (4b) you can get the lambda value in self.l2_reg_lambda 
@@ -64,7 +65,7 @@ class SoftmaxModel:
              f"Grad shape: {self.grad.shape}, w: {self.w.shape}"
 
         batch_size, in_dim = X.shape
-        self.grad = (X.T @ (outputs - targets)) / batch_size
+        self.grad = (X.T @ (outputs - targets)) / batch_size + self.l2_reg_lambda * self.w
 
     def zero_grad(self) -> None:
         self.grad = None
