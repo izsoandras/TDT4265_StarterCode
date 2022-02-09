@@ -14,6 +14,12 @@ def pre_process_images(X: np.ndarray):
     assert X.shape[1] == 784,\
         f"X.shape[1]: {X.shape[1]}, should be 784"
     # TODO implement this function (Task 2a)
+    std = 0.3081
+    mean = 0.1307
+    X = X.astype(np.float64) / 255.0
+    X = (X - mean) / std
+    bias_column = np.zeros_like(X[:, 0])
+    X = np.column_stack((X, bias_column))
     return X
 
 
@@ -27,9 +33,15 @@ def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray):
     """
     assert targets.shape == outputs.shape,\
         f"Targets shape: {targets.shape}, outputs: {outputs.shape}"
-    # TODO: Implement this function (copy from last assignment)
-    raise NotImplementedError
+    ce_loss = np.average(-np.sum(targets * np.log(outputs)))/targets.shape[0]
 
+    return ce_loss
+
+def sigmoid(z):
+    return np.exp(z)/np.sum(np.exp(z), axis=1, keepdims=True)
+
+def sigmoid_derv(z):
+    return sigmoid(z)*(1-sigmoid(z))
 
 class SoftmaxModel:
 
@@ -42,7 +54,7 @@ class SoftmaxModel:
         # Always reset random seed before weight init to get comparable results.
         np.random.seed(1)
         # Define number of input nodes
-        self.I = None
+        self.I = 785
         self.use_improved_sigmoid = use_improved_sigmoid
 
         # Define number of output nodes
@@ -61,6 +73,10 @@ class SoftmaxModel:
             prev = size
         self.grads = [None for i in range(len(self.ws))]
 
+        #add list tracking all the activations
+        self.activations = []
+        self.zs = []
+
     def forward(self, X: np.ndarray) -> np.ndarray:
         """
         Args:
@@ -71,7 +87,18 @@ class SoftmaxModel:
         # TODO implement this function (Task 2b)
         # HINT: For performing the backward pass, you can save intermediate activations in variables in the forward pass.
         # such as self.hidden_layer_output = ...
-        return None
+
+        self.activations = [np.zeros(o) for o in self.neurons_per_layer]
+        self.zs = []
+        buffer = X
+
+        for i in range(len(self.ws)):
+            z = buffer @ self.ws[i]
+            buffer = sigmoid(z)
+            self.activations[i] = buffer
+            self.zs.append(z)
+        
+        return buffer
 
     def backward(self, X: np.ndarray, outputs: np.ndarray,
                  targets: np.ndarray) -> None:
@@ -88,12 +115,26 @@ class SoftmaxModel:
             f"Output shape: {outputs.shape}, targets: {targets.shape}"
         # A list of gradients.
         # For example, self.grads[0] will be the gradient for the first hidden layer
-        self.grads = []
+        self.grads = [np.zeros(w.shape) for w in self.ws]
+
+        batch_size, in_dim = X.shape
+        d = (self.activations[-1] - targets) / batch_size * sigmoid_derv(self.zs[-1])
+        self.grads[-1] = np.dot(self.activations[-2].transpose(), d)
+
+        for l in range(1, len(self.neurons_per_layer) + 1):
+            print(len(self.neurons_per_layer))
+            z = self.zs[-l]
+            sp = sigmoid_derv(z)
+            d = d @ self.ws[-l+1]* sp
+            self.grads[-l] = np.dot(d, self.activations[-l-1].transpose())
 
         for grad, w in zip(self.grads, self.ws):
             assert grad.shape == w.shape,\
                 f"Expected the same shape. Grad shape: {grad.shape}, w: {w.shape}."
+            
+        print(len(self.grads))
 
+        
     def zero_grad(self) -> None:
         self.grads = [None for i in range(len(self.ws))]
 
@@ -107,7 +148,10 @@ def one_hot_encode(Y: np.ndarray, num_classes: int):
         Y: shape [Num examples, num classes]
     """
     # TODO: Implement this function (copy from last assignment)
-    raise NotImplementedError
+    Y_oh = np.zeros((Y.shape[0], num_classes))
+    for example in range(Y.shape[0]):
+        Y_oh[example, Y[example]] = 1
+    return Y_oh
 
 
 def gradient_approximation_test(
