@@ -1,5 +1,6 @@
 import numpy as np
 import utils
+
 np.random.seed(1)
 
 
@@ -10,14 +11,15 @@ def pre_process_images(X: np.ndarray):
     Returns:
         X: images of shape [batch size, 785] in the range (-1, 1)
     """
-    assert X.shape[1] == 784,\
+    assert X.shape[1] == 784, \
         f"X.shape[1]: {X.shape[1]}, should be 784"
     # TODO implement this function (Task 2a)
 
-    Xret = X.copy().astype(np.float64)/128 - 1
-    Xret[-1,:] = np.zeros_like(Xret[0,:])
+    Xret = X.copy().astype(np.float64) / 128 - 1
+    bias_column = np.zeros_like(Xret[:, 0])
+    result = np.column_stack((Xret, bias_column))
 
-    return Xret
+    return result
 
 
 def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray) -> float:
@@ -29,16 +31,19 @@ def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray) -> float:
         Cross entropy error (float)
     """
     # TODO implement this function (Task 2a)
-    assert targets.shape == outputs.shape,\
+    assert targets.shape == outputs.shape, \
         f"Targets shape: {targets.shape}, outputs: {outputs.shape}"
-    return 0
+
+    ce_loss = np.average(-(targets * np.log(outputs) + (1 - targets) * np.log(1 - outputs)))
+
+    return ce_loss
 
 
 class BinaryModel:
 
     def __init__(self):
         # Define number of input nodes
-        self.I = None
+        self.I = 785
         self.w = np.zeros((self.I, 1))
         self.grad = None
 
@@ -51,11 +56,11 @@ class BinaryModel:
         """
         # TODO implement this function (Task 2a)
 
-        z = self.w @ X
+        z = X @ self.w
 
-        a = 
+        a = 1 / (1 + np.exp(-z))
 
-        return None
+        return a
 
     def backward(self, X: np.ndarray, outputs: np.ndarray, targets: np.ndarray) -> None:
         """
@@ -66,11 +71,15 @@ class BinaryModel:
             targets: labels/targets of each image of shape: [batch size, 1]
         """
         # TODO implement this function (Task 2a)
-        assert targets.shape == outputs.shape,\
+
+        assert targets.shape == outputs.shape, \
             f"Output shape: {outputs.shape}, targets: {targets.shape}"
         self.grad = np.zeros_like(self.w)
-        assert self.grad.shape == self.w.shape,\
+        assert self.grad.shape == self.w.shape, \
             f"Grad shape: {self.grad.shape}, w: {self.w.shape}"
+
+        batch_size, in_dim = X.shape
+        self.grad = (X.T @ (outputs - targets))/batch_size
 
     def zero_grad(self) -> None:
         self.grad = None
@@ -81,7 +90,7 @@ def gradient_approximation_test(model: BinaryModel, X: np.ndarray, Y: np.ndarray
         Numerical approximation for gradients. Should not be edited. 
         Details about this test is given in the appendix in the assignment.
     """
-    w_orig = np.random.normal(loc=0, scale=1/model.w.shape[0]**2, size=model.w.shape)
+    w_orig = np.random.normal(loc=0, scale=1 / model.w.shape[0] ** 2, size=model.w.shape)
     epsilon = 1e-3
     for i in range(w_orig.shape[0]):
         model.w = w_orig.copy()
@@ -98,9 +107,9 @@ def gradient_approximation_test(model: BinaryModel, X: np.ndarray, Y: np.ndarray
         logits = model.forward(X)
         model.backward(X, logits, Y)
         difference = gradient_approximation - model.grad[i, 0]
-        assert abs(difference) <= epsilon**2,\
+        assert abs(difference) <= epsilon ** 2, \
             f"Calculated gradient is incorrect. " \
-            f"Approximation: {gradient_approximation}, actual gradient: {model.grad[i,0]}\n" \
+            f"Approximation: {gradient_approximation}, actual gradient: {model.grad[i, 0]}\n" \
             f"If this test fails there could be errors in your cross entropy loss function, " \
             f"forward function or backward function"
 
@@ -111,7 +120,7 @@ if __name__ == "__main__":
     X_train = pre_process_images(X_train)
     assert X_train.max() <= 1.0, f"The images (X_train) should be normalized to the range [-1, 1]"
     assert X_train.min() < 0 and X_train.min() >= -1, f"The images (X_train) should be normalized to the range [-1, 1]"
-    assert X_train.shape[1] == 785,\
+    assert X_train.shape[1] == 785, \
         f"Expected X_train to have 785 elements per image. Shape was: {X_train.shape}"
 
     # Simple test for forward pass. Note that this does not cover all errors!
