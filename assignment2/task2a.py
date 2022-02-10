@@ -38,7 +38,7 @@ def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray):
     return ce_loss
 
 def sigmoid(z):
-    return np.exp(z)/np.sum(np.exp(z), axis=1, keepdims=True)
+    return np.exp(z)/np.sum(np.exp(z), keepdims=True) #Axis=1
 
 def sigmoid_derv(z):
     return sigmoid(z)*(1-sigmoid(z))
@@ -88,16 +88,18 @@ class SoftmaxModel:
         # HINT: For performing the backward pass, you can save intermediate activations in variables in the forward pass.
         # such as self.hidden_layer_output = ...
 
-        self.activations = [np.zeros(o) for o in self.neurons_per_layer]
+        self.vs = [X]
         self.zs = []
         buffer = X
 
-        for i in range(len(self.ws)):
-            z = buffer @ self.ws[i]
+
+        for weight in self.ws:
+            z = buffer @ weight
             buffer = sigmoid(z)
-            self.activations[i] = buffer
+            self.vs.append(buffer)
             self.zs.append(z)
-        
+
+
         return buffer
 
     def backward(self, X: np.ndarray, outputs: np.ndarray,
@@ -116,23 +118,26 @@ class SoftmaxModel:
         # A list of gradients.
         # For example, self.grads[0] will be the gradient for the first hidden layer
         self.grads = [np.zeros(w.shape) for w in self.ws]
-
         batch_size, in_dim = X.shape
-        d = (self.activations[-1] - targets) / batch_size * sigmoid_derv(self.zs[-1])
-        self.grads[-1] = np.dot(self.activations[-2].transpose(), d)
+        for i in range(batch_size):
+            error = (outputs[i, :] - targets[i, :]) / batch_size
+            self.grads[-1] += np.outer(self.vs[-2][i, :], error)/batch_size
 
-        for l in range(1, len(self.neurons_per_layer) + 1):
-            print(len(self.neurons_per_layer))
-            z = self.zs[-l]
-            sp = sigmoid_derv(z)
-            d = d @ self.ws[-l+1]* sp
-            self.grads[-l] = np.dot(d, self.activations[-l-1].transpose())
+            for l in range(2, len(self.neurons_per_layer) + 1):
+                error = sigmoid_derv(self.zs[-l][i]) * np.dot(self.ws[-l+1], error)
+                self.grads[-l] += np.outer(self.vs[-l-1][i, :], error)/batch_size
 
         for grad, w in zip(self.grads, self.ws):
             assert grad.shape == w.shape,\
                 f"Expected the same shape. Grad shape: {grad.shape}, w: {w.shape}."
-            
+
         print(len(self.grads))
+        print(self.grads[0].shape)
+        print(self.grads[1].shape)
+        print(self.grads[0])
+
+
+
 
         
     def zero_grad(self) -> None:
