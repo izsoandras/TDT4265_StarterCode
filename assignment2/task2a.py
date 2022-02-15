@@ -46,6 +46,17 @@ def sigmoid(z):
 def sigmoid_derv(z):
     return sigmoid(z) * (1 - sigmoid(z))
 
+def impr_sigmoid(z):
+    return 1.7159 * np.tanh(2*z/3)
+
+
+def impr_sigmoid_derv(z):
+    return 1.7159 * 2 / 3 / np.cosh(2*z/3) ** 2
+
+
+def softmax(z):
+    return np.exp(z)/np.sum(np.exp(z), axis=1, keepdims=True)
+
 
 class SoftmaxModel:
 
@@ -72,21 +83,20 @@ class SoftmaxModel:
         for size in self.neurons_per_layer:
             w_shape = (prev, size)
             print("Initializing weight to shape:", w_shape)
-            w = np.zeros(w_shape)
+            if use_improved_weight_init:
+                w = np.random.uniform(-1/np.sqrt(self.I), 1/np.sqrt(self.I), w_shape)
+            else:
+                w = np.random.uniform(-1, 1, size=w_shape)
             self.ws.append(w)
             prev = size
         self.grads = [None for i in range(len(self.ws))]
-
-        # add list tracking all the activations
-        self.activations = []
-        self.zs = []
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         """
         Args:
             X: images of shape [batch size, 785]
         Returns:
-            y: output of model with shape [batch size, num_outputs]
+                y: output of model with shape [batch size, num_outputs]
         """
         # TODO implement this function (Task 2b)
         # HINT: For performing the backward pass, you can save intermediate activations in variables in the forward pass.
@@ -98,10 +108,14 @@ class SoftmaxModel:
 
         for weight in self.ws:
             z = buffer @ weight
-            buffer = sigmoid(z)
-            self.vs.append(buffer)
             self.zs.append(z)
-
+            if weight is self.ws[-1]:
+                buffer = softmax(z)
+            elif self.use_improved_sigmoid:
+                buffer = impr_sigmoid(z)
+            else:
+                buffer = sigmoid(z)
+            self.vs.append(buffer)
         return buffer
 
     def backward(self, X: np.ndarray, outputs: np.ndarray,
@@ -123,10 +137,13 @@ class SoftmaxModel:
         batch_size, in_dim = X.shape
 
         for i in range(batch_size):
-            error = (outputs[i] - targets[i]) * sigmoid_derv(self.zs[-1][i])
+            error = (outputs[i] - targets[i])
             self.grads[-1] += np.outer(self.vs[-2][i], error) / batch_size
             for j in range(2, len(self.ws) + 1):
-                error = sigmoid_derv(self.zs[-j][i]) * np.dot(self.ws[-j + 1], error)
+                if self.use_improved_sigmoid:
+                    error = impr_sigmoid_derv(self.zs[-j][i]) * np.dot(self.ws[-j + 1], error)
+                else:
+                    error = sigmoid_derv(self.zs[-j][i]) * np.dot(self.ws[-j + 1], error)
                 self.grads[-j] += np.outer(self.vs[-j - 1][i], error) / batch_size
 
         for grad, w in zip(self.grads, self.ws):
@@ -176,6 +193,7 @@ def gradient_approximation_test(
                 model.backward(X, logits, Y)
                 difference = gradient_approximation - \
                              model.grads[layer_idx][i, j]
+
                 assert abs(difference) <= epsilon ** 2, \
                     f"Calculated gradient is incorrect. " \
                     f"Layer IDX = {layer_idx}, i={i}, j={j}.\n" \

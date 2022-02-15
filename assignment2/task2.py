@@ -3,6 +3,7 @@ import utils
 import matplotlib.pyplot as plt
 from task2a import cross_entropy_loss, SoftmaxModel, one_hot_encode, pre_process_images
 from trainer import BaseTrainer
+
 np.random.seed(0)
 
 
@@ -16,7 +17,13 @@ def calculate_accuracy(X: np.ndarray, targets: np.ndarray, model: SoftmaxModel) 
         Accuracy (float)
     """
     # TODO: Implement this function (copy from last assignment)
-    accuracy = 0
+    inference = model.forward(X)
+    corr_predictions = 0
+    for i in range(X.shape[0]):
+        inference[i, :] = (inference[i, :] == np.max(inference[i, :])) * 1
+        corr_predictions += sum(inference[i, :] == targets[i, :]) == len(inference[i, :])
+    # print(corr_predictions)
+    accuracy = corr_predictions / targets.shape[0]
     return accuracy
 
 
@@ -50,7 +57,12 @@ class SoftmaxTrainer(BaseTrainer):
 
         loss = 0
 
-        loss = cross_entropy_loss(Y_batch, logits)  # sol
+        logits = self.model.forward(X_batch)
+        loss = cross_entropy_loss(Y_batch, logits)
+        self.model.backward(X_batch, logits, Y_batch)
+
+        for layer_idx, w in enumerate(self.model.ws):
+            self.model.ws[layer_idx] -= self.learning_rate * self.model.grads[layer_idx]
 
         return loss
 
@@ -88,7 +100,7 @@ if __name__ == "__main__":
 
     # Settings for task 3. Keep all to false for task 2.
     use_improved_sigmoid = False
-    use_improved_weight_init = False
+    use_improved_weight_init = True
     use_momentum = False
 
     # Load dataset
@@ -103,12 +115,16 @@ if __name__ == "__main__":
         neurons_per_layer,
         use_improved_sigmoid,
         use_improved_weight_init)
+
     trainer = SoftmaxTrainer(
         momentum_gamma, use_momentum,
         model, learning_rate, batch_size, shuffle_data,
         X_train, Y_train, X_val, Y_val,
     )
+
     train_history, val_history = trainer.train(num_epochs)
+
+
 
     print("Final Train Cross Entropy Loss:",
           cross_entropy_loss(Y_train, model.forward(X_train)))
@@ -135,4 +151,4 @@ if __name__ == "__main__":
     plt.xlabel("Number of Training Steps")
     plt.ylabel("Accuracy")
     plt.legend()
-    plt.savefig("task2c_train_loss.png")
+    plt.savefig("task3a_train_loss.png")

@@ -1,3 +1,5 @@
+import numpy as np
+
 import utils
 import matplotlib.pyplot as plt
 from task2a import pre_process_images, one_hot_encode, SoftmaxModel
@@ -24,45 +26,58 @@ if __name__ == "__main__":
     Y_train = one_hot_encode(Y_train, 10)
     Y_val = one_hot_encode(Y_val, 10)
 
-    model = SoftmaxModel(
+    model2 = SoftmaxModel(
         neurons_per_layer,
         use_improved_sigmoid,
         use_improved_weight_init)
-    trainer = SoftmaxTrainer(
+    trainer2 = SoftmaxTrainer(
         momentum_gamma, use_momentum,
-        model, learning_rate, batch_size, shuffle_data,
+        model2, learning_rate, batch_size, shuffle_data,
         X_train, Y_train, X_val, Y_val,
     )
-    train_history, val_history = trainer.train(num_epochs)
+    #train_history2, val_history2 = trainer2.train(num_epochs)
+
+    # np.save("model_task2_train.npy", train_history2)
+    # np.save("model_task2_val.npy", val_history2)
+    train_history2 = np.load("model_task2_train.npy", allow_pickle=True)
+    val_history2 = np.load("model_task2_val.npy", allow_pickle=True)
 
     # Example created for comparing with and without shuffling.
     # For comparison, show all loss/accuracy curves in the same plot
     # YOU CAN DELETE EVERYTHING BELOW!
-    shuffle_data = False
-    model_no_shuffle = SoftmaxModel(
+
+    use_improved_sigmoid = True
+
+    model3 = SoftmaxModel(
         neurons_per_layer,
         use_improved_sigmoid,
         use_improved_weight_init)
-    trainer_shuffle = SoftmaxTrainer(
+    trainer3 = SoftmaxTrainer(
         momentum_gamma, use_momentum,
-        model_no_shuffle, learning_rate, batch_size, shuffle_data,
+        model3, learning_rate, batch_size, shuffle_data,
         X_train, Y_train, X_val, Y_val,
     )
-    train_history_no_shuffle, val_history_no_shuffle = trainer_shuffle.train(
-        num_epochs)
-    shuffle_data = True
+    train_history3, val_history3 = trainer3.train(num_epochs)
+
+    #
+    np.save("model_task3_impr_sig_train", train_history3)
+    np.save("model_task3_impr_sig_val", val_history3)
+    # train_history3 = np.load("model_task3_impr_init_train.npy", allow_pickle=True)
+    # val_history3 = np.load("model_task3_impr_init_val.npy", allow_pickle=True)
+
+    case = "Task 2 Model - Use improved sigmoid"
+
 
     plt.subplot(1, 2, 1)
-    utils.plot_loss(train_history["loss"],
+    utils.plot_loss(train_history2[()]["loss"],
                     "Task 2 Model", npoints_to_average=10)
     utils.plot_loss(
-        train_history_no_shuffle["loss"], "Task 2 Model - No dataset shuffling", npoints_to_average=10)
+        train_history3["loss"], case, npoints_to_average=10)
     plt.ylim([0, .4])
     plt.subplot(1, 2, 2)
-    plt.ylim([0.85, .95])
-    utils.plot_loss(val_history["accuracy"], "Task 2 Model")
-    utils.plot_loss(
-        val_history_no_shuffle["accuracy"], "Task 2 Model - No Dataset Shuffling")
+    plt.ylim([0.87, 1])
+    utils.plot_loss(val_history2[()]["accuracy"], "Task 2 Model")
+    utils.plot_loss(val_history3["accuracy"], case)
     plt.ylabel("Validation Accuracy")
     plt.legend()
     plt.show()
