@@ -1,6 +1,7 @@
 import numpy as np
 import utils
 import typing
+
 np.random.seed(1)
 
 
@@ -11,7 +12,7 @@ def pre_process_images(X: np.ndarray):
     Returns:
         X: images of shape [batch size, 785] normalized as described in task2a
     """
-    assert X.shape[1] == 784,\
+    assert X.shape[1] == 784, \
         f"X.shape[1]: {X.shape[1]}, should be 784"
     # TODO implement this function (Task 2a)
     std = 0.3081
@@ -31,17 +32,20 @@ def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray):
     Returns:
         Cross entropy error (float)
     """
-    assert targets.shape == outputs.shape,\
+    assert targets.shape == outputs.shape, \
         f"Targets shape: {targets.shape}, outputs: {outputs.shape}"
-    ce_loss = np.average(-np.sum(targets * np.log(outputs)))/targets.shape[0]
+    ce_loss = np.average(-np.sum(targets * np.log(outputs))) / targets.shape[0]
 
     return ce_loss
 
+
 def sigmoid(z):
-    return np.exp(z)/np.sum(np.exp(z), keepdims=True) #Axis=1
+    return 1.0 / (1.0 + np.exp(-z))
+
 
 def sigmoid_derv(z):
-    return sigmoid(z)*(1-sigmoid(z))
+    return sigmoid(z) * (1 - sigmoid(z))
+
 
 class SoftmaxModel:
 
@@ -73,7 +77,7 @@ class SoftmaxModel:
             prev = size
         self.grads = [None for i in range(len(self.ws))]
 
-        #add list tracking all the activations
+        # add list tracking all the activations
         self.activations = []
         self.zs = []
 
@@ -92,13 +96,11 @@ class SoftmaxModel:
         self.zs = []
         buffer = X
 
-
         for weight in self.ws:
             z = buffer @ weight
             buffer = sigmoid(z)
             self.vs.append(buffer)
             self.zs.append(z)
-
 
         return buffer
 
@@ -113,33 +115,24 @@ class SoftmaxModel:
             targets: labels/targets of each image of shape: [batch size, num_classes]
         """
         # TODO implement this function (Task 2b)
-        assert targets.shape == outputs.shape,\
+        assert targets.shape == outputs.shape, \
             f"Output shape: {outputs.shape}, targets: {targets.shape}"
         # A list of gradients.
         # For example, self.grads[0] will be the gradient for the first hidden layer
-        self.grads = [np.zeros(w.shape) for w in self.ws]
+        self.grads = [np.zeros(weight.shape) for weight in self.ws]
         batch_size, in_dim = X.shape
-        for i in range(batch_size):
-            error = (outputs[i, :] - targets[i, :]) / batch_size
-            self.grads[-1] += np.outer(self.vs[-2][i, :], error)/batch_size
 
-            for l in range(2, len(self.neurons_per_layer) + 1):
-                error = sigmoid_derv(self.zs[-l][i]) * np.dot(self.ws[-l+1], error)
-                self.grads[-l] += np.outer(self.vs[-l-1][i, :], error)/batch_size
+        for i in range(batch_size):
+            error = (outputs[i] - targets[i]) * sigmoid_derv(self.zs[-1][i])
+            self.grads[-1] += np.outer(self.vs[-2][i], error) / batch_size
+            for j in range(2, len(self.ws) + 1):
+                error = sigmoid_derv(self.zs[-j][i]) * np.dot(self.ws[-j + 1], error)
+                self.grads[-j] += np.outer(self.vs[-j - 1][i], error) / batch_size
 
         for grad, w in zip(self.grads, self.ws):
-            assert grad.shape == w.shape,\
+            assert grad.shape == w.shape, \
                 f"Expected the same shape. Grad shape: {grad.shape}, w: {w.shape}."
 
-        print(len(self.grads))
-        print(self.grads[0].shape)
-        print(self.grads[1].shape)
-        print(self.grads[0])
-
-
-
-
-        
     def zero_grad(self) -> None:
         self.grads = [None for i in range(len(self.ws))]
 
@@ -182,8 +175,8 @@ def gradient_approximation_test(
                 logits = model.forward(X)
                 model.backward(X, logits, Y)
                 difference = gradient_approximation - \
-                    model.grads[layer_idx][i, j]
-                assert abs(difference) <= epsilon**2,\
+                             model.grads[layer_idx][i, j]
+                assert abs(difference) <= epsilon ** 2, \
                     f"Calculated gradient is incorrect. " \
                     f"Layer IDX = {layer_idx}, i={i}, j={j}.\n" \
                     f"Approximation: {gradient_approximation}, actual gradient: {model.grads[layer_idx][i, j]}\n" \
@@ -202,7 +195,7 @@ if __name__ == "__main__":
     X_train, Y_train, *_ = utils.load_full_mnist()
     X_train = pre_process_images(X_train)
     Y_train = one_hot_encode(Y_train, 10)
-    assert X_train.shape[1] == 785,\
+    assert X_train.shape[1] == 785, \
         f"Expected X_train to have 785 elements per image. Shape was: {X_train.shape}"
 
     neurons_per_layer = [64, 10]
