@@ -46,6 +46,8 @@ if __name__ == "__main__":
     # For comparison, show all loss/accuracy curves in the same plot
     # YOU CAN DELETE EVERYTHING BELOW!
 
+
+    case = "Task 2 Model - Use improved sigmoid"
     use_improved_sigmoid = True
 
     model3 = SoftmaxModel(
@@ -57,27 +59,63 @@ if __name__ == "__main__":
         model3, learning_rate, batch_size, shuffle_data,
         X_train, Y_train, X_val, Y_val,
     )
-    train_history3, val_history3 = trainer3.train(num_epochs)
+    # train_history3, val_history3 = trainer3.train(num_epochs)
 
     #
-    np.save("model_task3_impr_sig_train", train_history3)
-    np.save("model_task3_impr_sig_val", val_history3)
-    # train_history3 = np.load("model_task3_impr_init_train.npy", allow_pickle=True)
-    # val_history3 = np.load("model_task3_impr_init_val.npy", allow_pickle=True)
-
-    case = "Task 2 Model - Use improved sigmoid"
+    # np.save("model_task3_impr_sig_train", train_history3)
+    # np.save("model_task3_impr_sig_val", val_history3)
+    train_history3 = np.load("model_task3_impr_init_train.npy", allow_pickle=True)
+    val_history3 = np.load("model_task3_impr_init_val.npy", allow_pickle=True)
 
 
+    case = "Task 3 - Use momentum"
+    use_momentum = True
+
+    model3b = SoftmaxModel(
+        neurons_per_layer,
+        use_improved_sigmoid,
+        use_improved_weight_init)
+    trainer3b = SoftmaxTrainer(
+        momentum_gamma, use_momentum,
+        model3, learning_rate, batch_size, shuffle_data,
+        X_train, Y_train, X_val, Y_val,
+    )
+    train_history3c, val_history3c = trainer3.train(num_epochs)
+
+    #
+    np.save("model_task3c_momentum_train", train_history3c)
+    np.save("model_task3c_momentum_val", val_history3c)
+    # train_history3c = np.load("model_task3c_momentum_train.npy", allow_pickle=True)
+    # val_history3c = np.load("model_task3c_momentum_val.npy", allow_pickle=True)
+
+
+
+    # plt.subplot(1, 2, 1)
+    # utils.plot_loss(train_history2[()]["loss"],
+    #                 "Task 2 Model", npoints_to_average=10)
+    # utils.plot_loss(
+    #     train_history3["loss"], case, npoints_to_average=10)
+    # plt.ylim([0, .4])
+    # plt.subplot(1, 2, 2)
+    # plt.ylim([0.87, 1])
+    # utils.plot_loss(val_history2[()]["accuracy"], "Task 2 Model")
+    # utils.plot_loss(val_history3["accuracy"], case)
+    # plt.ylabel("Validation Accuracy")
+    # plt.legend()
+    # plt.show()
+
+    plt.figure()
     plt.subplot(1, 2, 1)
-    utils.plot_loss(train_history2[()]["loss"],
-                    "Task 2 Model", npoints_to_average=10)
+    utils.plot_loss(train_history3[()]["loss"],
+                    "Improved sigmoid", npoints_to_average=10)
     utils.plot_loss(
-        train_history3["loss"], case, npoints_to_average=10)
+        train_history3c["loss"], "Momentum", npoints_to_average=10)
     plt.ylim([0, .4])
     plt.subplot(1, 2, 2)
     plt.ylim([0.87, 1])
-    utils.plot_loss(val_history2[()]["accuracy"], "Task 2 Model")
-    utils.plot_loss(val_history3["accuracy"], case)
+    utils.plot_loss(val_history3[()]["accuracy"], "Improved sigmoid")
+    utils.plot_loss(val_history3c["accuracy"], "Momentum")
     plt.ylabel("Validation Accuracy")
     plt.legend()
     plt.show()
+    plt.savefig('task3c_momentum.png')
