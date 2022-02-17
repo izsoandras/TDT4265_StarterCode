@@ -29,21 +29,21 @@ if __name__ == "__main__":
     # Task 4a   -   Too few hidden units
     neurons_per_layer = [32, 10]
 
-    model4a = SoftmaxModel(
-        neurons_per_layer,
-        use_improved_sigmoid,
-        use_improved_weight_init)
-    trainer4a = SoftmaxTrainer(
-        momentum_gamma, use_momentum,
-        model4a, learning_rate, batch_size, shuffle_data,
-        X_train, Y_train, X_val, Y_val,
-    )
-    train_history4a, val_history4a = trainer4a.train(num_epochs)
-
-    np.save("model_task4a_train.npy", train_history4a)
-    np.save("model_task4a_val.npy", val_history4a)
-    # train_history4a = np.load("model_task4a_train.npy", allow_pickle=True)[()]
-    # val_history4a = np.load("model_task4a_val.npy", allow_pickle=True)[()]
+    # model4a = SoftmaxModel(
+    #     neurons_per_layer,
+    #     use_improved_sigmoid,
+    #     use_improved_weight_init)
+    # trainer4a = SoftmaxTrainer(
+    #     momentum_gamma, use_momentum,
+    #     model4a, learning_rate, batch_size, shuffle_data,
+    #     X_train, Y_train, X_val, Y_val,
+    # )
+    # train_history4a, val_history4a = trainer4a.train(num_epochs)
+    #
+    # np.save("model_task4a_train.npy", train_history4a)
+    # np.save("model_task4a_val.npy", val_history4a)
+    train_history4a = np.load("model_task4a_train.npy", allow_pickle=True)[()]
+    val_history4a = np.load("model_task4a_val.npy", allow_pickle=True)[()]
 
     # Example created for comparing with and without shuffling.
     # For comparison, show all loss/accuracy curves in the same plot
@@ -51,24 +51,29 @@ if __name__ == "__main__":
 
     neurons_per_layer = [128, 10]
 
-    model4b = SoftmaxModel(
-        neurons_per_layer,
-        use_improved_sigmoid,
-        use_improved_weight_init)
-    trainer4b = SoftmaxTrainer(
-        momentum_gamma, use_momentum,
-        model4b, learning_rate, batch_size, shuffle_data,
-        X_train, Y_train, X_val, Y_val,
-    )
-    train_history4b, val_history4b = trainer4b.train(num_epochs)
+    # model4b = SoftmaxModel(
+    #     neurons_per_layer,
+    #     use_improved_sigmoid,
+    #     use_improved_weight_init)
+    # trainer4b = SoftmaxTrainer(
+    #     momentum_gamma, use_momentum,
+    #     model4b, learning_rate, batch_size, shuffle_data,
+    #     X_train, Y_train, X_val, Y_val,
+    # )
+    # train_history4b, val_history4b = trainer4b.train(num_epochs)
+    #
+    # np.save("model_task4b_train.npy", train_history4b)
+    # np.save("model_task4b_val.npy", val_history4b)
+    train_history4b = np.load("model_task4b_train.npy", allow_pickle=True)[()]
+    val_history4b = np.load("model_task4b_val.npy", allow_pickle=True)[()]
 
-    np.save("model_task4b_train.npy", train_history4b)
-    np.save("model_task4b_val.npy", val_history4b)
-    # train_history4b = np.load("model_task4b_train.npy", allow_pickle=True)[()]
-    # val_history4b = np.load("model_task4b_val.npy", allow_pickle=True)[()]
+    train_history3c = np.load("model_task3c_momentum_train.npy", allow_pickle=True)[()]
+    val_history3c = np.load("model_task3c_momentum_val.npy", allow_pickle=True)[()]
 
     plt.figure()
     plt.subplot(1, 2, 1)
+    utils.plot_loss(train_history3c["loss"],
+                    "hidden num: 64", npoints_to_average=10)
     utils.plot_loss(train_history4a["loss"],
                     "hidden num: 32", npoints_to_average=10)
     utils.plot_loss(
@@ -76,6 +81,7 @@ if __name__ == "__main__":
     plt.ylim([0, .4])
     plt.subplot(1, 2, 2)
     plt.ylim([0.87, 1])
+    utils.plot_loss(val_history3c["accuracy"], "hidden num: 64")
     utils.plot_loss(val_history4a["accuracy"], "hidden num: 32")
     utils.plot_loss(val_history4b["accuracy"], "hidden num: 128")
     plt.ylabel("Validation Accuracy")
