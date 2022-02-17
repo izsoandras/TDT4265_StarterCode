@@ -15,9 +15,9 @@ if __name__ == "__main__":
     momentum_gamma = .9  # Task 3 hyperparameter
     shuffle_data = True
 
-    use_improved_sigmoid = False
-    use_improved_weight_init = False
-    use_momentum = False
+    use_improved_sigmoid = True
+    use_improved_weight_init = True
+    use_momentum = True
 
     # Load dataset
     X_train, Y_train, X_val, Y_val = utils.load_full_mnist()
@@ -42,8 +42,8 @@ if __name__ == "__main__":
 
     np.save("model_task4a_train.npy", train_history4a)
     np.save("model_task4a_val.npy", val_history4a)
-    # train_history2 = np.load("model_task4a_train.npy", allow_pickle=True)
-    # val_history2 = np.load("model_task4a_val.npy", allow_pickle=True)
+    # train_history4a = np.load("model_task4a_train.npy", allow_pickle=True)[()]
+    # val_history4a = np.load("model_task4a_val.npy", allow_pickle=True)[()]
 
     # Example created for comparing with and without shuffling.
     # For comparison, show all loss/accuracy curves in the same plot
@@ -64,8 +64,8 @@ if __name__ == "__main__":
 
     np.save("model_task4b_train.npy", train_history4b)
     np.save("model_task4b_val.npy", val_history4b)
-    # train_history2 = np.load("model_task4a_train.npy", allow_pickle=True)
-    # val_history2 = np.load("model_task4a_val.npy", allow_pickle=True)
+    # train_history4b = np.load("model_task4b_train.npy", allow_pickle=True)[()]
+    # val_history4b = np.load("model_task4b_val.npy", allow_pickle=True)[()]
 
     plt.figure()
     plt.subplot(1, 2, 1)
@@ -80,5 +80,5 @@ if __name__ == "__main__":
     utils.plot_loss(val_history4b["accuracy"], "hidden num: 128")
     plt.ylabel("Validation Accuracy")
     plt.legend()
-    plt.show()
     plt.savefig('task4ab.png')
+    plt.show()
