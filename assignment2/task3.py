@@ -47,8 +47,10 @@ if __name__ == "__main__":
     #np.save("model_task2_train.npy", train_history2)
     #np.save("model_task2_val.npy", val_history2)
 
-    train_history2 = np.load("model_task2_train.npy", allow_pickle=True)
-    val_history2 = np.load("model_task2_val.npy", allow_pickle=True)
+    # np.save("model_task2_train.npy", train_history2)
+    # np.save("model_task2_val.npy", val_history2)
+    train_history2 = np.load("model_task2_train.npy", allow_pickle=True)[()]
+    val_history2 = np.load("model_task2_val.npy", allow_pickle=True)[()]
 
     #MODEL FOR TASK 3A - IMPORVED INIT
     case = "Task 3a Model - Use improved initialisation"
@@ -84,12 +86,12 @@ if __name__ == "__main__":
         model3b, learning_rate, batch_size, shuffle_data,
         X_train, Y_train, X_val, Y_val,
     )
-    #train_history3b, val_history3b = trainer3b.train(num_epochs)
-    #np.save("model_task3_impr_sig_train", train_history3b)
-    #np.save("model_task3_impr_sig_val", val_history3b)
+    train_history3, val_history3 = trainer3.train(num_epochs)
 
-    train_history3b = np.load("model_task3_impr_sig_train.npy", allow_pickle=True)
-    val_history3b = np.load("model_task3_impr_sig_val.npy", allow_pickle=True)
+    np.save("model_task3_impr_sig_train", train_history3)
+    np.save("model_task3_impr_sig_val", val_history3)
+    # train_history3 = np.load("model_task3_impr_init_train.npy", allow_pickle=True)[()]
+    # val_history3 = np.load("model_task3_impr_init_val.npy", allow_pickle=True)[()]
 
     # MDOEL FOR TASK 3C - MOMENTUM
     case = "Task 3 - Use momentum"
@@ -112,6 +114,10 @@ if __name__ == "__main__":
     train_history3c = np.load("model_task3c_momentum_train.npy", allow_pickle=True)
     val_history3c = np.load("model_task3c_momentum_val.npy", allow_pickle=True)
 
+    np.save("model_task3c_momentum_train", train_history3c)
+    np.save("model_task3c_momentum_val", val_history3c)
+    # train_history3c = np.load("model_task3c_momentum_train.npy", allow_pickle=True)[()]
+    # val_history3c = np.load("model_task3c_momentum_val.npy", allow_pickle=True)[()]
 
 
     # plt.subplot(1, 2, 1)
@@ -130,51 +136,19 @@ if __name__ == "__main__":
 
     plt.figure()
     plt.subplot(1, 2, 1)
-    utils.plot_loss(train_history2[()]["loss"],
-                    "Model Task 2", npoints_to_average=10)
-    utils.plot_loss(
-        train_history3a[()]["loss"], "Improved init.", npoints_to_average=10)
-    plt.ylim([0, .4])
-    plt.subplot(1, 2, 2)
-    plt.ylim([0.87, 1])
-    utils.plot_loss(val_history2[()]["accuracy"], "Model Task 2")
-    utils.plot_loss(val_history3a[()]["accuracy"], "Improved init.")
-    plt.ylabel("Validation Accuracy")
-    plt.legend()
-    plt.show()
-    #plt.savefig('task3a_impr_init.png')
-
-    plt.figure()
-    plt.subplot(1, 2, 1)
-    utils.plot_loss(train_history3a[()]["loss"],
-                    "Improved init.", npoints_to_average=10)
-    utils.plot_loss(
-        train_history3b[()]["loss"], "Improved sigmoid", npoints_to_average=10)
-    plt.ylim([0, .4])
-    plt.subplot(1, 2, 2)
-    plt.ylim([0.87, 1])
-    utils.plot_loss(val_history3a[()]["accuracy"], "Improved init.")
-    utils.plot_loss(val_history3b[()]["accuracy"], "Improved sigmoid")
-    plt.ylabel("Validation Accuracy")
-    plt.legend()
-    plt.show()
-    #plt.savefig('task3b_impr_sigmoid.png')
-
-    plt.figure()
-    plt.subplot(1, 2, 1)
-    utils.plot_loss(train_history3b[()]["loss"],
+    utils.plot_loss(train_history3["loss"],
                     "Improved sigmoid", npoints_to_average=10)
     utils.plot_loss(
         train_history3c[()]["loss"], "Momentum", npoints_to_average=10)
     plt.ylim([0, .4])
     plt.subplot(1, 2, 2)
     plt.ylim([0.87, 1])
-    utils.plot_loss(val_history3b[()]["accuracy"], "Improved sigmoid")
-    utils.plot_loss(val_history3c[()]["accuracy"], "Momentum")
+    utils.plot_loss(val_history3["accuracy"], "Improved sigmoid")
+    utils.plot_loss(val_history3c["accuracy"], "Momentum")
     plt.ylabel("Validation Accuracy")
     plt.legend()
+    plt.savefig('task3c_momentum.png')
     plt.show()
-    #plt.savefig('task3c_momentum.png')
 
     plt.figure()
     plt.subplot(1, 2, 1)
