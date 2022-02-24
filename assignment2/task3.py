@@ -108,7 +108,7 @@ if __name__ == "__main__":
     #train_history3c, val_history3c = trainer3c.train(num_epochs)
     #np.save("model_task3c_momentum_train", train_history3c)
     #np.save("model_task3c_momentum_val", val_history3c)
-    
+
     train_history3c = np.load("model_task3c_momentum_train.npy", allow_pickle=True)
     val_history3c = np.load("model_task3c_momentum_val.npy", allow_pickle=True)
 
