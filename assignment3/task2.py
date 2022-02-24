@@ -29,17 +29,40 @@ class ExampleModel(nn.Module):
                 kernel_size=5,
                 stride=1,
                 padding=2
-            )
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+            nn.Conv2d(
+                in_channels=num_filters,
+                out_channels=64,
+                kernel_size=5,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+            nn.Conv2d(
+                in_channels=64,
+                out_channels=128,
+                kernel_size=5,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2)
         )
         # The output of feature_extractor will be [batch_size, num_filters, 16, 16]
-        self.num_output_features = 32*32*32
+        self.num_output_features = 4*4*128
         # Initialize our last fully connected layer
         # Inputs all extracted features from the convolutional layers
         # Outputs num_classes predictions, 1 for each class.
         # There is no need for softmax activation function, as this is
         # included with nn.CrossEntropyLoss
         self.classifier = nn.Sequential(
-            nn.Linear(self.num_output_features, num_classes),
+            nn.Flatten(),
+            nn.Linear(self.num_output_features, 64),
+            nn.ReLU(),
+            nn.Linear(64, num_classes)
         )
 
     def forward(self, x):
@@ -50,7 +73,8 @@ class ExampleModel(nn.Module):
         """
         # TODO: Implement this function (Task  2a)
         batch_size = x.shape[0]
-        out = x
+        feat = self.feature_extractor(x)
+        out = self.classifier(feat)
         expected_shape = (batch_size, self.num_classes)
         assert out.shape == (batch_size, self.num_classes),\
             f"Expected output of forward pass to be: {expected_shape}, but got: {out.shape}"
@@ -79,7 +103,7 @@ def main():
     # Set the random generator seed (parameters, shuffling etc).
     # You can try to change this and check if you still get the same result! 
     utils.set_seed(0)
-    epochs = 10
+    epochs = 1
     batch_size = 64
     learning_rate = 5e-2
     early_stop_count = 4
