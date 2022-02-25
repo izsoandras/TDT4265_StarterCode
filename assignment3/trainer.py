@@ -25,7 +25,9 @@ def compute_loss_and_accuracy(
     # TODO: Implement this function (Task  2a)
     n = len(dataloader.dataset)
     with torch.no_grad():
+        batches = 0
         for (X_batch, Y_batch) in dataloader:
+            batches += 1
             # Transfer images/labels to GPU VRAM, if possible
             X_batch = utils.to_cuda(X_batch)
             Y_batch = utils.to_cuda(Y_batch)
@@ -33,14 +35,14 @@ def compute_loss_and_accuracy(
             output_probs = model(X_batch)
 
             # Compute Loss and Accuracy
-            average_loss += loss_criterion(output_probs, Y_batch)/n
+            average_loss += loss_criterion(output_probs, Y_batch)
             corr_predictions = 0
             for i in range(X_batch.shape[0]):
                 output_probs[i, :] = (output_probs[i, :] == max(output_probs[i, :])) * 1
                 corr_predictions += output_probs[i, Y_batch[i]] == 1
-            # print(corr_predictions)
-            accuracy = corr_predictions / Y_batch.shape[0]
-    return average_loss, accuracy
+            print(corr_predictions)
+            accuracy += corr_predictions / Y_batch.shape[0]
+    return average_loss / batches, accuracy / batches
 
 
 class Trainer:

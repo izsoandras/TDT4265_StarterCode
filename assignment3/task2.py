@@ -1,9 +1,12 @@
 import pathlib
 import matplotlib.pyplot as plt
+import torch.nn
+
 import utils
 from torch import nn
 from dataloaders import load_cifar10
 from trainer import Trainer
+from trainer import compute_loss_and_accuracy
 
 
 class ExampleModel(nn.Module):
@@ -103,7 +106,7 @@ def main():
     # Set the random generator seed (parameters, shuffling etc).
     # You can try to change this and check if you still get the same result! 
     utils.set_seed(0)
-    epochs = 1
+    epochs = 10
     batch_size = 64
     learning_rate = 5e-2
     early_stop_count = 4
@@ -120,5 +123,35 @@ def main():
     trainer.train()
     create_plots(trainer, "task2")
 
+def calc_best_values():
+    utils.set_seed(0)
+    epochs = 10
+    batch_size = 64
+    learning_rate = 5e-2
+    early_stop_count = 4
+    dataloader_train, dataloader_val, dataloader_test = load_cifar10(batch_size)
+    model = ExampleModel(image_channels=3, num_classes=10)
+    model.load_state_dict(utils.load_best_checkpoint(pathlib.Path('checkpoints')))
+    model.eval()
+
+    train_loss, train_acc = compute_loss_and_accuracy(
+        dataloader_train, model, torch.nn.CrossEntropyLoss()
+    )
+
+    validation_loss, validation_acc = compute_loss_and_accuracy(
+        dataloader_val, model, torch.nn.CrossEntropyLoss()
+    )
+
+    test_loss, test_acc = compute_loss_and_accuracy(
+        dataloader_test, model, torch.nn.CrossEntropyLoss()
+    )
+
+    print("Train_acc: " + str(train_acc))
+    print("Val_acc: " + str(validation_acc))
+    print("Test_acc: " + str(test_acc))
+
 if __name__ == "__main__":
     main()
+    #calc_best_values()
+
+
