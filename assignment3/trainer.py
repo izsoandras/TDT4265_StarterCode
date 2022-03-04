@@ -74,7 +74,7 @@ class Trainer:
         # self.optimizer = torch.optim.SGD(self.model.parameters(),
         #                                  self.learning_rate)
         self.optimizer = torch.optim.Adamax(self.model.parameters(),
-                                         self.learning_rate, weight_decay=1e-5)
+                                         self.learning_rate)#, weight_decay=1e-5)
 
         # Load our dataset
         self.dataloader_train, self.dataloader_val, self.dataloader_test = dataloaders
@@ -106,6 +106,10 @@ class Trainer:
             Train, validation and test.
         """
         self.model.eval()
+
+        _, training_acc = compute_loss_and_accuracy(self.dataloader_train, self.model, self.loss_criterion)
+        self.train_history["accuracy"][self.global_step] = training_acc
+
         validation_loss, validation_acc = compute_loss_and_accuracy(
             self.dataloader_val, self.model, self.loss_criterion
         )
