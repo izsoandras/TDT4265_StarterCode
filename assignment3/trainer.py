@@ -24,6 +24,7 @@ def compute_loss_and_accuracy(
     accuracy = 0
     # TODO: Implement this function (Task  2a)
     n = len(dataloader.dataset)
+    model.eval()
     with torch.no_grad():
         batches = 0
         for (X_batch, Y_batch) in dataloader:
@@ -40,8 +41,8 @@ def compute_loss_and_accuracy(
             for i in range(X_batch.shape[0]):
                 output_probs[i, :] = (output_probs[i, :] == max(output_probs[i, :])) * 1
                 corr_predictions += output_probs[i, Y_batch[i]] == 1
-            print(corr_predictions)
             accuracy += corr_predictions / Y_batch.shape[0]
+    model.train()
     return average_loss / batches, accuracy / batches
 
 
@@ -113,14 +114,14 @@ class Trainer:
         validation_loss, validation_acc = compute_loss_and_accuracy(
             self.dataloader_val, self.model, self.loss_criterion
         )
-        self.validation_history["loss"][self.global_step] = validation_loss
-        self.validation_history["accuracy"][self.global_step] = validation_acc
+        self.validation_history["loss"][self.global_step] = validation_loss.cpu()
+        self.validation_history["accuracy"][self.global_step] = validation_acc.cpu()
 
         test_loss, test_acc = compute_loss_and_accuracy(
             self.dataloader_test, self.model, self.loss_criterion
         )
-        self.test_history["loss"][self.global_step] = test_loss
-        self.test_history["accuracy"][self.global_step] = test_acc
+        self.test_history["loss"][self.global_step] = test_loss.cpu()
+        self.test_history["accuracy"][self.global_step] = test_acc.cpu()
         used_time = time.time() - self.start_time
 
         print(
@@ -187,6 +188,7 @@ class Trainer:
             return self.global_step % self.num_steps_per_val == 0
 
         for epoch in range(self.epochs):
+            print("Epoch: " + str(epoch))
             self.epoch = epoch
             # Perform a full pass through all the training samples
             for X_batch, Y_batch in self.dataloader_train:
