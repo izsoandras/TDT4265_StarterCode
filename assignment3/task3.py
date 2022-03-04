@@ -10,6 +10,93 @@ from trainer import Trainer
 from trainer import compute_loss_and_accuracy
 
 
+class ExampleModel_withoutDO(nn.Module):
+
+    def __init__(self,
+                 image_channels,
+                 num_classes):
+        """
+            Is called when model is initialized.
+            Args:
+                image_channels. Number of color channels in image (3)
+                num_classes: Number of classes we want to predict (10)
+        """
+        super().__init__()
+        # TODO: Implement this function (Task  2a)
+        num_filters = 128  # Set number of filters in first conv layer
+        self.num_classes = num_classes
+        # Define the convolutional layers
+        self.feature_extractor = nn.Sequential(
+            nn.Conv2d(
+                in_channels=image_channels,
+                out_channels=num_filters,
+                kernel_size=5,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            # nn.Sigmoid(),
+            nn.MaxPool2d(2, stride=2),
+            nn.BatchNorm2d(128),
+
+            nn.Conv2d(
+                in_channels=num_filters,
+                out_channels=256,
+                kernel_size=5,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            #nn.Sigmoid(),
+            nn.MaxPool2d(2, stride=2),
+            nn.BatchNorm2d(256),
+
+            nn.Conv2d(
+                in_channels=256,
+                out_channels=512,
+                kernel_size=5,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            #nn.Sigmoid(),
+            nn.MaxPool2d(2, stride=2),
+            nn.BatchNorm2d(512)
+        )
+        # The output of feature_extractor will be [batch_size, num_filters, 16, 16]
+        self.num_output_features = 8*4*128*2
+        # Initialize our last fully connected layer
+        # Inputs all extracted features from the convolutional layers
+        # Outputs num_classes predictions, 1 for each class.
+        # There is no need for softmax activation function, as this is
+        # included with nn.CrossEntropyLoss
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(self.num_output_features, 64),
+            nn.ReLU(),
+            #nn.Sigmoid(),
+            #nn.BatchNorm1d(64),
+            nn.Linear(64, num_classes)
+        )
+
+
+
+    def forward(self, x):
+        """
+        Performs a forward pass through the model
+        Args:
+            x: Input image, shape: [batch_size, 3, 32, 32]
+        """
+        # TODO: Implement this function (Task  2a)
+        batch_size = x.shape[0]
+        feat = self.feature_extractor(x)
+        #feat = self.dropout(feat)
+        out = self.classifier(feat)
+        expected_shape = (batch_size, self.num_classes)
+        assert out.shape == (batch_size, self.num_classes),\
+            f"Expected output of forward pass to be: {expected_shape}, but got: {out.shape}"
+        return out
+
 class ExampleModel(nn.Module):
 
     def __init__(self,
@@ -23,7 +110,7 @@ class ExampleModel(nn.Module):
         """
         super().__init__()
         # TODO: Implement this function (Task  2a)
-        num_filters = 64  # Set number of filters in first conv layer
+        num_filters = 128  # Set number of filters in first conv layer
         self.num_classes = num_classes
         # Define the convolutional layers
         self.feature_extractor = nn.Sequential(
@@ -34,37 +121,37 @@ class ExampleModel(nn.Module):
                 stride=1,
                 padding=2
             ),
-            # nn.ReLU(),
-            nn.Sigmoid(),
-            nn.MaxPool2d(2, stride=2),
-            nn.BatchNorm2d(64),
-
-            nn.Conv2d(
-                in_channels=num_filters,
-                out_channels=128,
-                kernel_size=5,
-                stride=1,
-                padding=2
-            ),
-            # nn.ReLU(),
-            nn.Sigmoid(),
+            nn.ReLU(),
+            # nn.Sigmoid(),
             nn.MaxPool2d(2, stride=2),
             nn.BatchNorm2d(128),
 
             nn.Conv2d(
-                in_channels=128,
+                in_channels=num_filters,
                 out_channels=256,
                 kernel_size=5,
                 stride=1,
                 padding=2
             ),
-            # nn.ReLU(),
-            nn.Sigmoid(),
+            nn.ReLU(),
+            #nn.Sigmoid(),
             nn.MaxPool2d(2, stride=2),
-            nn.BatchNorm2d(256)
+            nn.BatchNorm2d(256),
+
+            nn.Conv2d(
+                in_channels=256,
+                out_channels=512,
+                kernel_size=5,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            #nn.Sigmoid(),
+            nn.MaxPool2d(2, stride=2),
+            nn.BatchNorm2d(512)
         )
         # The output of feature_extractor will be [batch_size, num_filters, 16, 16]
-        self.num_output_features = 8*4*128
+        self.num_output_features = 8*4*128*2
         # Initialize our last fully connected layer
         # Inputs all extracted features from the convolutional layers
         # Outputs num_classes predictions, 1 for each class.
@@ -72,14 +159,15 @@ class ExampleModel(nn.Module):
         # included with nn.CrossEntropyLoss
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(self.num_output_features, 64),    
-            # nn.ReLU(),
-            nn.Softmax(),
-            nn.BatchNorm1d(64),
+            nn.Linear(self.num_output_features, 64),
+            nn.ReLU(),
+            nn.Dropout(0.6),
+            #nn.Sigmoid(),
+            #nn.BatchNorm1d(64),
             nn.Linear(64, num_classes)
         )
 
-        self.dropout = nn.Dropout(0.2)
+
 
     def forward(self, x):
         """
@@ -90,7 +178,7 @@ class ExampleModel(nn.Module):
         # TODO: Implement this function (Task  2a)
         batch_size = x.shape[0]
         feat = self.feature_extractor(x)
-        feat = self.dropout(feat)
+        #feat = self.dropout(feat)
         out = self.classifier(feat)
         expected_shape = (batch_size, self.num_classes)
         assert out.shape == (batch_size, self.num_classes),\
@@ -118,7 +206,7 @@ def create_plots(trainer: Trainer, name: str):
 
 def main():
     # Set the random generator seed (parameters, shuffling etc).
-    # You can try to change this and check if you still get the same result! 
+    # You can try to change this and check if you still get the same result!
     utils.set_seed(0)
     epochs = 10
     batch_size = 64
@@ -135,10 +223,36 @@ def main():
         dataloaders
     )
     trainer.train()
-    # create_plots(trainer, "task3")
 
+    model2 = ExampleModel_withoutDO(image_channels=3, num_classes=10)
+    trainer2 = Trainer(
+        batch_size,
+        learning_rate,
+        early_stop_count,
+        epochs,
+        model2,
+        dataloaders
+    )
+    #trainer2.train()
+
+
+
+    # create_plots(trainer, "task3")
+    trainer.model.eval()
+    trainer2.model.eval()
     test_loss, test_acc = compute_loss_and_accuracy(trainer.dataloader_test, trainer.model, trainer.loss_criterion)
+    print("Final test loss: " + str(test_loss))
+    print("Final test accuracy: " + str(test_acc))
+
+    train_loss, train_acc = compute_loss_and_accuracy(trainer.dataloader_train, trainer.model, trainer.loss_criterion)
+    print("Final train loss: " + str(train_loss))
+    print("Final train accuracy: " + str(train_acc))
+
+
     plot_path = pathlib.Path("plots")
+    test_loss2, test_acc2 = compute_loss_and_accuracy(trainer2.dataloader_test, trainer2.model, trainer2.loss_criterion)
+    print("Final test loss without DO: " + str(test_loss2))
+    print("Final test accuracy without DO: " + str(test_acc2))
     plot_path.mkdir(exist_ok=True)
     # Save plots and show them
     plt.figure(figsize=(20, 8))
@@ -147,23 +261,29 @@ def main():
     utils.plot_loss(trainer.train_history["loss"], label="Training loss", npoints_to_average=10)
     utils.plot_loss(trainer.validation_history["loss"], label="Validation loss")
     utils.plot_loss(trainer.test_history["loss"], label="Test loss")
+    utils.plot_loss(trainer2.train_history["loss"], label="Training loss without DO", npoints_to_average=10)
+    utils.plot_loss(trainer2.validation_history["loss"], label="Validation loss without DO")
+    utils.plot_loss(trainer2.test_history["loss"], label="Test loss without DO")
     plt.legend()
     plt.subplot(1, 2, 2)
     plt.title("Accuracy")
     utils.plot_loss(trainer.validation_history["accuracy"], label="Validation Accuracy")
     utils.plot_loss(trainer.test_history["accuracy"], label="Test Accuracy")
+    utils.plot_loss(trainer2.validation_history["accuracy"], label="Validation Accuracy without DO")
+    utils.plot_loss(trainer2.test_history["accuracy"], label="Test Accuracy without DO")
     plt.legend()
     # # these are matplotlib.patch.Patch properties
     # props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     # # place a text box in upper left in axes coords
-    # plt.text(0.05, 0.95, f"Final accuracy:\nTrain: {trainer.train_history['accuracy']}%\nValidation: {trainer.validation_history['accuracy']}%\nTest: {trainer.test_history['accuracy']}%", fontsize=14,
+    #plt.text(0.05, 0.95, f"Final accuracy:\nTrain: {trainer.train_history['accuracy']}%\nValidation: {trainer.validation_history['accuracy']}%\nTest: {trainer.test_history['accuracy']}%", fontsize=14,
     #         verticalalignment='top', bbox=props)
 
-    text_box = AnchoredText(f"Final accuracy:\nTrain: {trainer.train_history['accuracy'][-1]}%\nValidation: {trainer.validation_history['accuracy'][-1]}%\nTest: {trainer.test_history['accuracy'][-1]}%", frameon=True, loc=4, pad=0.5)
-    plt.setp(text_box.patch, facecolor='white', alpha=0.5)
-    plt.gca().add_artist(text_box)
+    #text_box = AnchoredText(f"Final accuracy:\nTrain: {trainer.train_history['accuracy'][]}%\nValidation: {trainer.validation_history['accuracy'][-1]}%\nTest: {trainer.test_history['accuracy'][-1]}%", frameon=True, loc=4, pad=0.5)
+    #plt.setp(text_box.patch, facecolor='white', alpha=0.5)
+    #plt.gca().add_artist(text_box)
 
-    plt.savefig(plot_path.joinpath(f"task3_test_plot.png"))
+    plt.savefig(plot_path.joinpath(f"task3_test_plot_p06comp.png"))
+
 
 
     plt.show()
