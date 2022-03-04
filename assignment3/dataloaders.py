@@ -4,6 +4,8 @@ import torch
 import typing
 import numpy as np
 import pathlib
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 np.random.seed(0)
 
 mean = (0.5, 0.5, 0.5)
@@ -21,6 +23,13 @@ def load_cifar10(batch_size: int, validation_fraction: float = 0.1
     # Note that transform train will apply the same transform for
     # validation!
     transform_train = transforms.Compose([
+        # transforms.RandomCrop((20,20)),
+        # transforms.Resize((32, 32)),
+        # transforms.ColorJitter(brightness=0.5),
+        # transforms.RandomRotation(degrees=45),
+        # transforms.RandomHorizontalFlip(0.5),
+        # transforms.RandomVerticalFlip(0.05),
+        # transforms.RandomGrayscale(p=0.2),
         transforms.ToTensor(),
         transforms.Normalize(mean, std),
     ])
