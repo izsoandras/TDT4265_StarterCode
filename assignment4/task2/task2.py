@@ -16,7 +16,6 @@ def calculate_iou(prediction_box, gt_box):
             float: value of the intersection of union for the two boxes.
     """
     # YOUR CODE HERE
-
     # Compute intersection
     if (prediction_box[0] > gt_box[2] or prediction_box[2] < gt_box[0] or prediction_box[1] > gt_box[3]
             or prediction_box[3] < gt_box[1]):
@@ -98,7 +97,7 @@ def get_all_box_matches(prediction_boxes, gt_boxes, iou_threshold):
     iou_flat = iou_scores.copy() #[item for sublist in iou_scores for item in sublist]
     iou_flat = [item for sublist in iou_flat for item in sublist]
     iou_flat.sort(reverse=True)
-    print("Sorted IOU scores: " + str(iou_flat))
+    #print("Sorted IOU scores: " + str(iou_flat))
 
     # Find all matches with the highest IoU threshold
     return_pred_boxes = np.empty((0, 4))
@@ -112,18 +111,17 @@ def get_all_box_matches(prediction_boxes, gt_boxes, iou_threshold):
     list_j = []
     for idx_val, val in enumerate(iou_flat):
         i, j = np.where(ar==val)
-        print("list_i: " + str(list_i))
-        print("list_j: " + str(list_j))
-        print("val: " + str(val))
+        #print("list_i: " + str(list_i))
+        #print("list_j: " + str(list_j))
+        #print("val: " + str(val))
         if i[0] in list_i or j[0] in list_j or val == 0:
-            print("Coninue")
             continue
         list_i.append(i[0])
         list_j.append(j[0])
         return_pred_boxes = np.vstack((return_pred_boxes, prediction_boxes[i[0]]))
-        print("Return_pred_boxes: " + str(return_pred_boxes))
+        #print("Return_pred_boxes: " + str(return_pred_boxes))
         return_gt_boxes = np.vstack((return_gt_boxes, gt_boxes[j[0]]))
-        print("Return_gt_boxes: " + str(return_gt_boxes))
+        #print("Return_gt_boxes: " + str(return_gt_boxes))
 
 
     return return_pred_boxes, return_gt_boxes
@@ -176,11 +174,18 @@ def calculate_precision_recall_all_images(
     """
     prec = 0
     recall = 0
+    tot_tp = 0
+    tot_fp = 0
+    tot_fn = 0
     n = len(all_prediction_boxes)
     for idx, pred in enumerate(all_prediction_boxes):
         dict = calculate_individual_image_result(all_prediction_boxes[idx], all_gt_boxes[idx], iou_threshold)
-        prec += calculate_precision(dict['true_pos'], dict['false_pos'], dict['false_neg'])
-        recall += calculate_recall(dict['true_pos'], dict['false_pos'], dict['false_neg'])
+        tot_tp += dict['true_pos']
+        tot_fp += dict['false_pos']
+        tot_fn += dict['false_neg']
+
+    prec = calculate_precision(tot_tp, tot_fp, tot_fn)
+    recall = calculate_recall(tot_tp, tot_fp, tot_fn)
 
     return prec, recall
 
@@ -215,9 +220,27 @@ def get_precision_recall_curve(
     # curve, we will use an approximation
     confidence_thresholds = np.linspace(0, 1, 500)
     # YOUR CODE HERE
-
     precisions = []
     recalls = []
+
+    for idx, conf in enumerate(confidence_thresholds):
+        pred_boxes = all_prediction_boxes.copy()
+        for img_idx, img in enumerate(pred_boxes):
+            to_delete = []
+            #print("="*80)
+            for box_idx, box in enumerate(img):
+                if confidence_scores[img_idx][box_idx] < conf:
+                    to_delete.append(box_idx)
+            #print(str(to_delete) + " ----- %f"%conf)
+
+            pred_boxes[img_idx] = np.delete(pred_boxes[img_idx][:], to_delete, axis=0)
+
+        prec, rec = calculate_precision_recall_all_images(pred_boxes, all_gt_boxes, iou_threshold)
+        precisions.append(prec)
+        print(prec)
+        recalls.append(rec)
+
+
     return np.array(precisions), np.array(recalls)
 
 
@@ -254,7 +277,18 @@ def calculate_mean_average_precision(precisions, recalls):
     # Calculate the mean average precision given these recall levels.
     recall_levels = np.linspace(0, 1.0, 11)
     # YOUR CODE HERE
+
+    print("Precision Sum: " + str(sum(precisions)))
+    print("Recalls Sum: " + str(sum(recalls)))
+
     average_precision = 0
+    interpolated_precision = [np.amax(np.flipud(precisions)[i:]) for i in range(len(recalls))]
+    idx_of_interest = np.searchsorted(np.flipud(recalls), recall_levels, side='left')
+    print(idx_of_interest)
+    for idx in idx_of_interest:
+        if idx == len(interpolated_precision):
+            idx -= 1
+        average_precision += interpolated_precision[idx]/len(idx_of_interest)
     return average_precision
 
 
