@@ -283,12 +283,16 @@ def calculate_mean_average_precision(precisions, recalls):
 
     average_precision = 0
     interpolated_precision = [np.amax(np.flipud(precisions)[i:]) for i in range(len(recalls))]
-    idx_of_interest = np.searchsorted(np.flipud(recalls), recall_levels, side='left')
-    print(idx_of_interest)
-    for idx in idx_of_interest:
-        if idx == len(interpolated_precision):
-            idx -= 1
-        average_precision += interpolated_precision[idx]/len(idx_of_interest)
+    interpolated_precision = np.flipud(interpolated_precision)
+
+    for rcl_lvl in recall_levels:
+        max_prec = 0
+        for idx, rcl in enumerate(recalls):
+            if rcl >= rcl_lvl and precisions[idx] > max_prec:
+                max_prec = precisions[idx]
+        average_precision += max_prec/len(recall_levels)
+
+
     return average_precision
 
 
