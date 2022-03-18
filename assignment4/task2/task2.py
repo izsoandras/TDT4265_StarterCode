@@ -290,7 +290,7 @@ def calculate_mean_average_precision(precisions, recalls):
         for idx, rcl in enumerate(recalls):
             if rcl >= rcl_lvl and precisions[idx] > max_prec:
                 max_prec = precisions[idx]
-        average_precision += max_prec/len(recall_levels)
+        average_precision += max_prec/len   (recall_levels)
 
 
     return average_precision

@@ -4,6 +4,6 @@ ujson
 pybind11
 git+https://github.com/NVIDIA/cocoapi.git@v0.6.0#subdirectory=PythonAPI
 pycocotools==2.0.0
-easydict
+easydictpi
 omegaconf
 vizer

@@ -1,0 +1,256 @@
+Saving SSD outputs to: outputs/
+/usr/local/lib/python3.7/dist-packages/torch/utils/data/dataloader.py:481: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  cpuset_checked))
+creating index...
+index created!
+2022-03-17 17:59:34,798 [INFO ] Loaded checkpoint from outputs/ssd300/checkpoints/4718.ckpt
+2022-03-17 17:59:34,990 [INFO ] Resuming train from: epoch: 13, global step: 4094
+
+SSD300                       Parameters  Buffers  Output shape       Datatype
+---                          ---         ---      ---                ---     
+feature_extractor.layer_0.0  896         -        [1, 32, 300, 300]  float32 
+feature_extractor.layer_0.1  -           -        [1, 32, 300, 300]  float32 
+feature_extractor.layer_0.2  -           -        [1, 32, 150, 150]  float32 
+feature_extractor.layer_0.3  18496       -        [1, 64, 150, 150]  float32 
+feature_extractor.layer_0.4  -           -        [1, 64, 150, 150]  float32 
+feature_extractor.layer_0.5  -           -        [1, 64, 75, 75]    float32 
+feature_extractor.layer_0.6  36928       -        [1, 64, 75, 75]    float32 
+feature_extractor.layer_0.7  -           -        [1, 64, 75, 75]    float32 
+feature_extractor.layer_0.8  73856       -        [1, 128, 38, 38]   float32 
+feature_extractor.layer_0.9  -           -        [1, 128, 38, 38]   float32 
+feature_extractor.layer_1.0  -           -        [1, 128, 38, 38]   float32 
+feature_extractor.layer_1.1  147584      -        [1, 128, 38, 38]   float32 
+feature_extractor.layer_1.2  -           -        [1, 128, 38, 38]   float32 
+feature_extractor.layer_1.3  295168      -        [1, 256, 19, 19]   float32 
+feature_extractor.layer_1.4  -           -        [1, 256, 19, 19]   float32 
+feature_extractor.layer_2.0  -           -        [1, 256, 19, 19]   float32 
+feature_extractor.layer_2.1  590080      -        [1, 256, 19, 19]   float32 
+feature_extractor.layer_2.2  -           -        [1, 256, 19, 19]   float32 
+feature_extractor.layer_2.3  295040      -        [1, 128, 10, 10]   float32 
+feature_extractor.layer_2.4  -           -        [1, 128, 10, 10]   float32 
+feature_extractor.layer_3.0  -           -        [1, 128, 10, 10]   float32 
+feature_extractor.layer_3.1  147584      -        [1, 128, 10, 10]   float32 
+feature_extractor.layer_3.2  -           -        [1, 128, 10, 10]   float32 
+feature_extractor.layer_3.3  147584      -        [1, 128, 5, 5]     float32 
+feature_extractor.layer_3.4  -           -        [1, 128, 5, 5]     float32 
+feature_extractor.layer_4.0  -           -        [1, 128, 5, 5]     float32 
+feature_extractor.layer_4.1  147584      -        [1, 128, 5, 5]     float32 
+feature_extractor.layer_4.2  -           -        [1, 128, 5, 5]     float32 
+feature_extractor.layer_4.3  73792       -        [1, 64, 3, 3]      float32 
+feature_extractor.layer_4.4  -           -        [1, 64, 3, 3]      float32 
+feature_extractor.layer_5.0  -           -        [1, 64, 3, 3]      float32 
+feature_extractor.layer_5.1  73856       -        [1, 128, 3, 3]     float32 
+feature_extractor.layer_5.2  -           -        [1, 128, 3, 3]     float32 
+feature_extractor.layer_5.3  73792       -        [1, 64, 1, 1]      float32 
+feature_extractor.layer_5.4  -           -        [1, 64, 1, 1]      float32 
+regression_heads.0           18448       -        [1, 16, 38, 38]    float32 
+classification_heads.0       50732       -        [1, 44, 38, 38]    float32 
+regression_heads.1           55320       -        [1, 24, 19, 19]    float32 
+classification_heads.1       152130      -        [1, 66, 19, 19]    float32 
+regression_heads.2           27672       -        [1, 24, 10, 10]    float32 
+classification_heads.2       76098       -        [1, 66, 10, 10]    float32 
+regression_heads.3           27672       -        [1, 24, 5, 5]      float32 
+classification_heads.3       76098       -        [1, 66, 5, 5]      float32 
+regression_heads.4           9232        -        [1, 16, 3, 3]      float32 
+classification_heads.4       25388       -        [1, 44, 3, 3]      float32 
+regression_heads.5           9232        -        [1, 16, 1, 1]      float32 
+classification_heads.5       25388       -        [1, 44, 1, 1]      float32 
+<top-level>:0                34928       -        [1, 4, 8732]       float32 
+<top-level>:1                -           -        [1, 4, 8732]       float32 
+---                          ---         ---      ---                ---     
+Total                        2710578     0        -                  -       
+
+Epoch 13: 100% 312/312 [01:53<00:00,  2.75it/s]
+Evaluating on dataset: 100% 32/32 [00:06<00:00,  4.69it/s]
+Loading and preparing results...
+Converting ndarray to lists...
+(10455, 7)
+0/10455
+DONE (t=0.04s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.47s).
+Accumulating evaluation results...
+DONE (t=0.53s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.51358
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.73492
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.64080
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.33735
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.65139
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.37810
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.56252
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.56252
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.36505
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.71079
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+2022-03-17 18:01:39,891 [INFO ] metrics/mAP: 0.514, metrics/mAP@0.5: 0.735, metrics/mAP@0.75: 0.641, metrics/mAP_small: 0.337, metrics/mAP_medium: 0.651, metrics/mAP_large: -1.000, metrics/average_recall@1: 0.378, metrics/average_recall@10: 0.563, metrics/average_recall@100: 0.563, metrics/average_recall@100_small: 0.365, metrics/average_recall@100_medium: 0.711, metrics/average_recall@100_large: -1.000, 
+Epoch 14: 100% 312/312 [01:53<00:00,  2.76it/s]
+Evaluating on dataset: 100% 32/32 [00:06<00:00,  5.08it/s]
+Loading and preparing results...
+Converting ndarray to lists...
+(10355, 7)
+0/10355
+DONE (t=0.22s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.59s).
+Accumulating evaluation results...
+DONE (t=0.53s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.52585
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.74447
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.65266
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.33905
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.66925
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.38367
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.57150
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.57150
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.36619
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.72593
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+2022-03-17 18:03:43,675 [INFO ] metrics/mAP: 0.526, metrics/mAP@0.5: 0.744, metrics/mAP@0.75: 0.653, metrics/mAP_small: 0.339, metrics/mAP_medium: 0.669, metrics/mAP_large: -1.000, metrics/average_recall@1: 0.384, metrics/average_recall@10: 0.571, metrics/average_recall@100: 0.571, metrics/average_recall@100_small: 0.366, metrics/average_recall@100_medium: 0.726, metrics/average_recall@100_large: -1.000, 
+Epoch 15: 100% 312/312 [01:54<00:00,  2.73it/s]
+Evaluating on dataset: 100% 32/32 [00:06<00:00,  5.12it/s]
+Loading and preparing results...
+Converting ndarray to lists...
+(10502, 7)
+0/10502
+DONE (t=0.04s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.50s).
+Accumulating evaluation results...
+DONE (t=0.52s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.53170
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.75605
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.66085
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.35385
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.66833
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.38727
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.57810
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.57810
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.38632
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.72278
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+2022-03-17 18:05:48,488 [INFO ] metrics/mAP: 0.532, metrics/mAP@0.5: 0.756, metrics/mAP@0.75: 0.661, metrics/mAP_small: 0.354, metrics/mAP_medium: 0.668, metrics/mAP_large: -1.000, metrics/average_recall@1: 0.387, metrics/average_recall@10: 0.578, metrics/average_recall@100: 0.578, metrics/average_recall@100_small: 0.386, metrics/average_recall@100_medium: 0.723, metrics/average_recall@100_large: -1.000, 
+2022-03-17 18:05:48,604 [INFO ] Saved model to: outputs/ssd300/checkpoints/5030.ckpt
+Epoch 16: 100% 312/312 [01:52<00:00,  2.77it/s]
+Evaluating on dataset: 100% 32/32 [00:06<00:00,  5.13it/s]
+Loading and preparing results...
+Converting ndarray to lists...
+(9730, 7)
+0/9730
+DONE (t=0.03s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.40s).
+Accumulating evaluation results...
+DONE (t=0.50s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.51929
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.73397
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.65063
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.33284
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.66234
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.38032
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.56363
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.56363
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.35955
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.71648
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+2022-03-17 18:07:51,573 [INFO ] metrics/mAP: 0.519, metrics/mAP@0.5: 0.734, metrics/mAP@0.75: 0.651, metrics/mAP_small: 0.333, metrics/mAP_medium: 0.662, metrics/mAP_large: -1.000, metrics/average_recall@1: 0.380, metrics/average_recall@10: 0.564, metrics/average_recall@100: 0.564, metrics/average_recall@100_small: 0.360, metrics/average_recall@100_medium: 0.716, metrics/average_recall@100_large: -1.000, 
+2022-03-17 18:07:51,670 [INFO ] Saved model to: outputs/ssd300/checkpoints/5342.ckpt
+Epoch 17: 100% 312/312 [01:51<00:00,  2.79it/s]
+Evaluating on dataset: 100% 32/32 [00:06<00:00,  5.13it/s]
+Loading and preparing results...
+Converting ndarray to lists...
+(9928, 7)
+0/9928
+DONE (t=0.03s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.70s).
+Accumulating evaluation results...
+DONE (t=0.51s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.53002
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.74825
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.65990
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.34511
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.67054
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.38657
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.57444
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.57444
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.37587
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.72309
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+2022-03-17 18:09:54,129 [INFO ] metrics/mAP: 0.530, metrics/mAP@0.5: 0.748, metrics/mAP@0.75: 0.660, metrics/mAP_small: 0.345, metrics/mAP_medium: 0.671, metrics/mAP_large: -1.000, metrics/average_recall@1: 0.387, metrics/average_recall@10: 0.574, metrics/average_recall@100: 0.574, metrics/average_recall@100_small: 0.376, metrics/average_recall@100_medium: 0.723, metrics/average_recall@100_large: -1.000, 
+2022-03-17 18:09:54,229 [INFO ] Saved model to: outputs/ssd300/checkpoints/5654.ckpt
+Epoch 18: 100% 312/312 [01:51<00:00,  2.80it/s]
+Evaluating on dataset: 100% 32/32 [00:06<00:00,  5.16it/s]
+Loading and preparing results...
+Converting ndarray to lists...
+(10471, 7)
+0/10471
+DONE (t=0.03s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.54s).
+Accumulating evaluation results...
+DONE (t=0.50s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.54002
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.75289
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.66859
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.36116
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.68062
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.39096
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.58584
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.58584
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.39014
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.73370
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+2022-03-17 18:11:56,077 [INFO ] metrics/mAP: 0.540, metrics/mAP@0.5: 0.753, metrics/mAP@0.75: 0.669, metrics/mAP_small: 0.361, metrics/mAP_medium: 0.681, metrics/mAP_large: -1.000, metrics/average_recall@1: 0.391, metrics/average_recall@10: 0.586, metrics/average_recall@100: 0.586, metrics/average_recall@100_small: 0.390, metrics/average_recall@100_medium: 0.734, metrics/average_recall@100_large: -1.000, 
+2022-03-17 18:11:56,174 [INFO ] Saved model to: outputs/ssd300/checkpoints/5966.ckpt
+Epoch 19: 100% 312/312 [01:50<00:00,  2.83it/s]
+Evaluating on dataset: 100% 32/32 [00:06<00:00,  5.11it/s]
+Loading and preparing results...
+Converting ndarray to lists...
+(10886, 7)
+0/10886
+DONE (t=0.04s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.55s).
+Accumulating evaluation results...
+DONE (t=0.50s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.55294
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.77188
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.68004
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.37759
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.68825
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.39735
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.59956
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.59956
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.41191
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.74138
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.00000
+2022-03-17 18:13:56,801 [INFO ] metrics/mAP: 0.553, metrics/mAP@0.5: 0.772, metrics/mAP@0.75: 0.680, metrics/mAP_small: 0.378, metrics/mAP_medium: 0.688, metrics/mAP_large: -1.000, metrics/average_recall@1: 0.397, metrics/average_recall@10: 0.600, metrics/average_recall@100: 0.600, metrics/average_recall@100_small: 0.412, metrics/average_recall@100_medium: 0.741, metrics/average_recall@100_large: -1.000, 
+2022-03-17 18:13:56,904 [INFO ] Saved model to: outputs/ssd300/checkpoints/6278.ckpt
